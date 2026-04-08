@@ -1,0 +1,17 @@
+{
+  "preText": "Create images",
+  "postText": "privately",
+  "textIntroSpeed": 30,
+  "textIntroCurve": "easeInCubic",
+  "textOverlap": 6,
+  "textBlur": 4,
+  "textScale": 0,
+  "textStagger": -140,
+  "iconDelay": 30,
+  "iconIntroSpeed": 800,
+  "iconIntroCurve": "easeOutBack",
+  "iconScaleIn": 0,
+  "iconScaleOut": 1.05,
+  "iconOpacityIn": 0,
+  "iconOpacityOut": 1
+}
