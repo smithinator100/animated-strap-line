@@ -1,6 +1,5 @@
 {
-  "preText": "Create images",
-  "postText": "privately",
+  "displayDuration": 3,
   "textIntroSpeed": 20,
   "textIntroCurve": "easeInQuint",
   "textOverlap": 6,
@@ -13,5 +12,18 @@
   "iconScaleIn": 0,
   "iconScaleOut": 1,
   "iconOpacityIn": 0,
-  "iconOpacityOut": 1
+  "iconOpacityOut": 1,
+  "textOutroSpeed": 20,
+  "textOutroCurve": "easeOutCubic",
+  "textOutroOverlap": 6,
+  "textOutroBlur": 0,
+  "textOutroScale": 0,
+  "textOutroStagger": -100,
+  "iconOutroDelay": 0,
+  "iconOutroSpeed": 300,
+  "iconOutroCurve": "easeInCubic",
+  "iconOutroScaleFrom": 1,
+  "iconOutroScaleTo": 0,
+  "iconOutroOpacityFrom": 1,
+  "iconOutroOpacityTo": 0
 }

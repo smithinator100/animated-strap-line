@@ -1,6 +1,13 @@
+export interface Headline {
+  id: string;
+  text: string;
+  iconSrc: string;
+}
+
 export interface AnimationSettings {
-  preText: string;
-  postText: string;
+  headlines: Headline[];
+  displayDuration: number;
+
   textIntroSpeed: number;
   textIntroCurve: string;
   textOverlap: number;
@@ -14,11 +21,53 @@ export interface AnimationSettings {
   iconScaleOut: number;
   iconOpacityIn: number;
   iconOpacityOut: number;
+
+  textOutroSpeed: number;
+  textOutroCurve: string;
+  textOutroOverlap: number;
+  textOutroBlur: number;
+  textOutroScale: number;
+  textOutroStagger: number;
+  iconOutroDelay: number;
+  iconOutroSpeed: number;
+  iconOutroCurve: string;
+  iconOutroScaleFrom: number;
+  iconOutroScaleTo: number;
+  iconOutroOpacityFrom: number;
+  iconOutroOpacityTo: number;
+}
+
+const iconModules = import.meta.glob<string>("./img/*.svg", {
+  eager: true,
+  import: "default",
+});
+
+export const ICON_OPTIONS: { key: string; label: string; src: string }[] =
+  Object.entries(iconModules).map(([path, src]) => {
+    const filename = path.split("/").pop()!.replace(".svg", "");
+    const label = filename.replace(/-/g, " ").replace(/Utility$/i, "").trim();
+    return { key: filename, label, src };
+  });
+
+export type AnimationPreset = Omit<AnimationSettings, "headlines">;
+
+let _nextId = 1;
+export function makeHeadlineId(): string {
+  return String(_nextId++);
+}
+
+function iconKey(fragment: string): string {
+  return ICON_OPTIONS.find((o) => o.key.includes(fragment))?.key ?? ICON_OPTIONS[0]?.key ?? "";
 }
 
 export const DEFAULT_SETTINGS: AnimationSettings = {
-  preText: "Create images",
-  postText: "privately",
+  headlines: [
+    { id: makeHeadlineId(), text: "Create images {icon} privately", iconSrc: iconKey("Subscription") },
+    { id: makeHeadlineId(), text: "Private {icon} searches", iconSrc: iconKey("Search") },
+    { id: makeHeadlineId(), text: "Totally privacy with {icon} VPN", iconSrc: iconKey("VPN") },
+  ],
+  displayDuration: 3,
+
   textIntroSpeed: 30,
   textIntroCurve: "easeInCubic",
   textOverlap: 12,
@@ -32,6 +81,35 @@ export const DEFAULT_SETTINGS: AnimationSettings = {
   iconScaleOut: 1,
   iconOpacityIn: 0,
   iconOpacityOut: 1,
+
+  textOutroSpeed: 30,
+  textOutroCurve: "easeOutCubic",
+  textOutroOverlap: 12,
+  textOutroBlur: 0,
+  textOutroScale: 0,
+  textOutroStagger: -30,
+  iconOutroDelay: 0,
+  iconOutroSpeed: 400,
+  iconOutroCurve: "easeInCubic",
+  iconOutroScaleFrom: 1,
+  iconOutroScaleTo: 0,
+  iconOutroOpacityFrom: 1,
+  iconOutroOpacityTo: 0,
+};
+
+export const DEFAULT_PRESET: AnimationPreset = (() => {
+  const { headlines: _, ...preset } = DEFAULT_SETTINGS;
+  return preset;
+})();
+
+export const ICON_TEXT_COLORS: Record<string, string> = {
+  "Fire-Utility": "#9E2B08",
+  "Cloud-Utility": "#045EB2",
+  "VPN-Utility": "#045EB2",
+  "DuckAI-Chat-Utility": "#682A7A",
+  "Subscription-Utility": "#682A7A",
+  "Shield-Utility": "#11604D",
+  "Search-Utility": "#B66A1F",
 };
 
 export const EASING_CURVES: Record<string, [number, number, number, number]> = {

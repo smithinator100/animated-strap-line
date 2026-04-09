@@ -1,16 +1,16 @@
 import { useState, useCallback, useEffect } from "react";
-import { AnimationSettings, DEFAULT_SETTINGS } from "./settings";
+import { AnimationPreset, DEFAULT_PRESET } from "./settings";
 
-function validatePreset(data: unknown): AnimationSettings | null {
+function validatePreset(data: unknown): AnimationPreset | null {
   if (typeof data !== "object" || data === null || Array.isArray(data))
     return null;
 
   const record = data as Record<string, unknown>;
-  const result = { ...DEFAULT_SETTINGS };
+  const result = { ...DEFAULT_PRESET };
 
-  for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof AnimationSettings)[]) {
+  for (const key of Object.keys(DEFAULT_PRESET) as (keyof AnimationPreset)[]) {
     if (!(key in record)) continue;
-    const expected = typeof DEFAULT_SETTINGS[key];
+    const expected = typeof DEFAULT_PRESET[key];
     if (typeof record[key] === expected) {
       (result as Record<string, unknown>)[key] = record[key];
     }
@@ -34,11 +34,11 @@ export function usePresets() {
   useEffect(() => { refresh(); }, [refresh]);
 
   const savePreset = useCallback(
-    async (name: string, settings: AnimationSettings) => {
+    async (name: string, preset: AnimationPreset) => {
       await fetch(`/api/presets/${encodeURIComponent(name)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings, null, 2),
+        body: JSON.stringify(preset, null, 2),
       });
       await refresh();
     },
@@ -46,7 +46,7 @@ export function usePresets() {
   );
 
   const loadPreset = useCallback(
-    async (name: string): Promise<AnimationSettings | null> => {
+    async (name: string): Promise<AnimationPreset | null> => {
       try {
         const res = await fetch(`/api/presets/${encodeURIComponent(name)}`);
         if (!res.ok) return null;
@@ -60,11 +60,11 @@ export function usePresets() {
   );
 
   const updatePreset = useCallback(
-    async (name: string, settings: AnimationSettings) => {
+    async (name: string, preset: AnimationPreset) => {
       await fetch(`/api/presets/${encodeURIComponent(name)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings, null, 2),
+        body: JSON.stringify(preset, null, 2),
       });
     },
     [],

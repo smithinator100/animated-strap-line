@@ -59,35 +59,17 @@
   display: inline-block;
 }
 
-.shield {
-  position: relative;
+.icon-container {
   flex-shrink: 0;
   width: 32px;
   height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.shieldFill {
-  position: absolute;
-  inset: 9.31% 10.94% 9.31% 9.31%;
-}
-
-.shieldFill img {
-  position: absolute;
+.icon-img {
   display: block;
   width: 100%;
   height: 100%;
-  max-width: none;
-}
-
-.shieldUnion {
-  position: absolute;
-  inset: 7.52% 9.15% 7.52% 7.53%;
-}
-
-.shieldUnion img {
-  position: absolute;
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: none;
 }

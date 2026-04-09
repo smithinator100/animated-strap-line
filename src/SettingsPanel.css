@@ -1,5 +1,5 @@
 .sp-panel {
-  width: 300px;
+  width: 480px;
   flex-shrink: 0;
   background: #fff;
   border-left: 1px solid #e5e5e5;
@@ -80,6 +80,19 @@
   font-variant-numeric: tabular-nums;
 }
 
+.sp-hint {
+  font-size: 11px;
+  color: #999;
+}
+
+.sp-hint code {
+  font-size: 11px;
+  background: #f0f0f0;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: #666;
+}
+
 .sp-field input[type="text"] {
   font-family: inherit;
   font-size: 13px;
@@ -129,7 +142,180 @@
   cursor: pointer;
 }
 
-/* Preset dropdown */
+/* ── Headline list ── */
+
+.sp-headline-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.sp-headline-order {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 4px;
+}
+
+.sp-headline-move {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 16px;
+  font-size: 8px;
+  line-height: 1;
+  color: #888;
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sp-headline-move:hover:not(:disabled) {
+  background: #eee;
+  color: #333;
+}
+
+.sp-headline-move:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.sp-headline-fields {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sp-headline-text {
+  font-family: inherit;
+  font-size: 12px;
+  padding: 5px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.sp-headline-text:focus {
+  border-color: #999;
+}
+
+.sp-headline-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  line-height: 1;
+  color: #999;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 2px;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sp-headline-remove:hover:not(:disabled) {
+  color: #c53030;
+  background: #fff5f5;
+}
+
+.sp-headline-remove:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.sp-headline-add {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: #11604d;
+  background: none;
+  border: 1px dashed #bbb;
+  border-radius: 8px;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.sp-headline-add:hover {
+  background: #f0faf7;
+  border-color: #11604d;
+}
+
+/* ── Accordion ── */
+
+.sp-accordion {
+  border-top: 1px solid #eee;
+}
+
+.sp-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.sp-accordion-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #999;
+}
+
+.sp-accordion-chevron {
+  font-size: 10px;
+  color: #999;
+  transition: transform 0.2s ease;
+}
+
+.sp-accordion-chevron--open {
+  transform: rotate(180deg);
+}
+
+.sp-accordion-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 12px;
+}
+
+.sp-accordion-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sp-group-title {
+  margin: 8px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+}
+
+/* ── Preset dropdown ── */
 
 .sp-preset-select {
   font-family: inherit;
@@ -205,4 +391,54 @@
   color: #c53030;
   border-color: #feb2b2;
   background: #fff5f5;
+}
+
+/* Icon select */
+
+.sp-icon-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sp-icon-preview {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.sp-icon-select {
+  flex: 1;
+  min-width: 0;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.sp-icon-select:focus {
+  border-color: #999;
+}
+
+/* Native select caret: 8px inset from right (replaces OS arrow) */
+.sp-field select,
+.sp-preset-select,
+.sp-icon-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M2 4h8l-4 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px 12px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 8px;
+  padding-right: 28px;
 }
