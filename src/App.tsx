@@ -12,7 +12,7 @@ import "./App.css";
 type Page = "gallery" | "create";
 
 export function App() {
-  const [page, setPage] = useState<Page>("create");
+  const [page, setPage] = useState<Page>("gallery");
   const [settings, setSettings] = useState<AnimationSettings>({
     ...DEFAULT_SETTINGS,
     headlines: DEFAULT_SETTINGS.headlines.map((h) => ({ ...h, id: makeHeadlineId() })),
