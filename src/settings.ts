@@ -4,13 +4,16 @@ export interface Headline {
   iconSrc: string;
 }
 
+export type TextAnimateBy = "letter" | "word";
+
 export interface AnimationSettings {
   headlines: Headline[];
   displayDuration: number;
+  textAnimateBy: TextAnimateBy;
 
   textIntroSpeed: number;
   textIntroCurve: string;
-  textOverlap: number;
+  textDelay: number;
   textBlur: number;
   textScale: number;
   textStagger: number;
@@ -22,9 +25,10 @@ export interface AnimationSettings {
   iconOpacityIn: number;
   iconOpacityOut: number;
 
+  textOutroAnimateBy: TextAnimateBy;
   textOutroSpeed: number;
   textOutroCurve: string;
-  textOutroOverlap: number;
+  textOutroDelay: number;
   textOutroBlur: number;
   textOutroScale: number;
   textOutroStagger: number;
@@ -64,13 +68,14 @@ export const DEFAULT_SETTINGS: AnimationSettings = {
   headlines: [
     { id: makeHeadlineId(), text: "Create images {icon} privately", iconSrc: iconKey("Subscription") },
     { id: makeHeadlineId(), text: "Private {icon} searches", iconSrc: iconKey("Search") },
-    { id: makeHeadlineId(), text: "Totally privacy with {icon} VPN", iconSrc: iconKey("VPN") },
+    { id: makeHeadlineId(), text: "Total privacy {icon} with a VPN", iconSrc: iconKey("VPN") },
   ],
   displayDuration: 3,
+  textAnimateBy: "letter",
 
-  textIntroSpeed: 30,
+  textIntroSpeed: 200,
   textIntroCurve: "easeInCubic",
-  textOverlap: 12,
+  textDelay: 0,
   textBlur: 0,
   textScale: 0,
   textStagger: -30,
@@ -82,9 +87,10 @@ export const DEFAULT_SETTINGS: AnimationSettings = {
   iconOpacityIn: 0,
   iconOpacityOut: 1,
 
-  textOutroSpeed: 30,
+  textOutroAnimateBy: "letter",
+  textOutroSpeed: 200,
   textOutroCurve: "easeOutCubic",
-  textOutroOverlap: 12,
+  textOutroDelay: 0,
   textOutroBlur: 0,
   textOutroScale: 0,
   textOutroStagger: -30,

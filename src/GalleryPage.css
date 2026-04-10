@@ -1,0 +1,72 @@
+.gallery {
+  flex: 1;
+  overflow-y: auto;
+  padding: 72px 32px 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-items: safe center;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 360px));
+  justify-content: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.gallery-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gallery-card-preview {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.gallery-card-container {
+  width: 100%;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  cursor: default;
+  user-select: none;
+}
+
+.gallery-card-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  padding: 0 4px;
+}
+
+.gallery-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.gallery-empty-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  margin: 0;
+}
+
+.gallery-empty-hint {
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+}

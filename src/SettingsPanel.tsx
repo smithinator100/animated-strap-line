@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   AnimationSettings,
   DEFAULT_SETTINGS,
@@ -200,10 +200,14 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
     loadPreset,
     updatePreset,
     deletePreset,
+    exportPresets,
+    importPresets,
   } = usePresets();
 
   const [newPresetName, setNewPresetName] = useState("");
   const [activePreset, setActivePreset] = useState<string | null>(null);
+  const [importStatus, setImportStatus] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function patch(partial: Partial<AnimationSettings>) {
     onChange({ ...settings, ...partial });
@@ -266,6 +270,18 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
   async function handleDelete(name: string) {
     await deletePreset(name);
     if (activePreset === name) setActivePreset(null);
+  }
+
+  async function handleImport(file: File) {
+    try {
+      const { imported, skipped } = await importPresets(file);
+      const parts: string[] = [`Imported ${imported} preset${imported !== 1 ? "s" : ""}`];
+      if (skipped.length > 0) parts.push(`skipped ${skipped.length}: ${skipped.join(", ")}`);
+      setImportStatus(parts.join(" — "));
+    } catch {
+      setImportStatus("Invalid preset file");
+    }
+    setTimeout(() => setImportStatus(null), 4000);
   }
 
   return (
@@ -370,6 +386,36 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             Delete
           </button>
         </div>
+
+        <div className="sp-preset-io">
+          <button
+            className="sp-preset-btn"
+            disabled={presetNames.length === 0}
+            onClick={exportPresets}
+            title="Download all presets as JSON"
+          >
+            Export All
+          </button>
+          <button
+            className="sp-preset-btn"
+            onClick={() => fileInputRef.current?.click()}
+            title="Import presets from JSON file"
+          >
+            Import
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            className="sp-hidden-input"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleImport(file);
+              e.target.value = "";
+            }}
+          />
+        </div>
+        {importStatus && <p className="sp-import-status">{importStatus}</p>}
       </section>
 
       {/* Display Duration */}
@@ -389,11 +435,21 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
       <Accordion title="Intro" defaultOpen>
         <div className="sp-accordion-group">
           <h4 className="sp-group-title">Text</h4>
+          <label className="sp-field">
+            <span className="sp-label">Animate by</span>
+            <select
+              value={settings.textAnimateBy}
+              onChange={(e) => patch({ textAnimateBy: e.target.value as "letter" | "word" })}
+            >
+              <option value="letter">Letter</option>
+              <option value="word">Word</option>
+            </select>
+          </label>
           <SliderRow
             label="Speed"
             value={settings.textIntroSpeed}
-            min={0}
-            max={150}
+            min={10}
+            max={500}
             step={5}
             unit="ms"
             onChange={(v) => patch({ textIntroSpeed: v })}
@@ -404,13 +460,13 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             onChange={(v) => patch({ textIntroCurve: v })}
           />
           <SliderRow
-            label="Letter overlap"
-            value={settings.textOverlap}
-            min={1}
-            max={30}
-            step={1}
-            unit="x"
-            onChange={(v) => patch({ textOverlap: v })}
+            label={settings.textAnimateBy === "word" ? "Word delay" : "Letter delay"}
+            value={settings.textDelay}
+            min={-500}
+            max={500}
+            step={5}
+            unit="ms"
+            onChange={(v) => patch({ textDelay: v })}
           />
           <label className="sp-field sp-toggle">
             <span className="sp-label">Blur</span>
@@ -529,11 +585,21 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
       <Accordion title="Outro">
         <div className="sp-accordion-group">
           <h4 className="sp-group-title">Text</h4>
+          <label className="sp-field">
+            <span className="sp-label">Animate by</span>
+            <select
+              value={settings.textOutroAnimateBy}
+              onChange={(e) => patch({ textOutroAnimateBy: e.target.value as "letter" | "word" })}
+            >
+              <option value="letter">Letter</option>
+              <option value="word">Word</option>
+            </select>
+          </label>
           <SliderRow
             label="Speed"
             value={settings.textOutroSpeed}
-            min={0}
-            max={150}
+            min={10}
+            max={500}
             step={5}
             unit="ms"
             onChange={(v) => patch({ textOutroSpeed: v })}
@@ -544,13 +610,13 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             onChange={(v) => patch({ textOutroCurve: v })}
           />
           <SliderRow
-            label="Letter overlap"
-            value={settings.textOutroOverlap}
-            min={1}
-            max={30}
-            step={1}
-            unit="x"
-            onChange={(v) => patch({ textOutroOverlap: v })}
+            label={settings.textOutroAnimateBy === "word" ? "Word delay" : "Letter delay"}
+            value={settings.textOutroDelay}
+            min={-500}
+            max={500}
+            step={5}
+            unit="ms"
+            onChange={(v) => patch({ textOutroDelay: v })}
           />
           <label className="sp-field sp-toggle">
             <span className="sp-label">Blur</span>
