@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { AnimationPreset, DEFAULT_PRESET } from "./settings";
+import { AnimationPreset, DEFAULT_PRESET, DEFAULT_SETTINGS, Headline, makeHeadlineId } from "./settings";
 import { supabase } from "./supabase";
 
 interface PresetBundle {
@@ -7,22 +7,44 @@ interface PresetBundle {
   presets: { name: string; preset: AnimationPreset }[];
 }
 
+function validateHeadline(h: unknown): Headline | null {
+  if (typeof h !== "object" || h === null || Array.isArray(h)) return null;
+  const rec = h as Record<string, unknown>;
+  if (typeof rec.text !== "string" || typeof rec.iconSrc !== "string") return null;
+  return {
+    id: typeof rec.id === "string" ? rec.id : makeHeadlineId(),
+    text: rec.text,
+    iconSrc: rec.iconSrc,
+  };
+}
+
 function validatePreset(data: unknown): AnimationPreset | null {
   if (typeof data !== "object" || data === null || Array.isArray(data))
     return null;
 
   const record = data as Record<string, unknown>;
-  const result = { ...DEFAULT_PRESET };
+  const { headlines: _defaultHeadlines, ...defaults } = DEFAULT_PRESET;
+  const result: Record<string, unknown> = { ...defaults };
 
-  for (const key of Object.keys(DEFAULT_PRESET) as (keyof AnimationPreset)[]) {
+  for (const key of Object.keys(defaults)) {
     if (!(key in record)) continue;
-    const expected = typeof DEFAULT_PRESET[key];
+    const expected = typeof (defaults as Record<string, unknown>)[key];
     if (typeof record[key] === expected) {
-      (result as Record<string, unknown>)[key] = record[key];
+      result[key] = record[key];
     }
   }
 
-  return result;
+  let headlines: Headline[];
+  if (Array.isArray(record.headlines) && record.headlines.length > 0) {
+    const validated = record.headlines.map(validateHeadline).filter((h): h is Headline => h !== null);
+    headlines = validated.length > 0
+      ? validated
+      : DEFAULT_SETTINGS.headlines.map((h) => ({ ...h, id: makeHeadlineId() }));
+  } else {
+    headlines = DEFAULT_SETTINGS.headlines.map((h) => ({ ...h, id: makeHeadlineId() }));
+  }
+
+  return { ...result, headlines } as AnimationPreset;
 }
 
 export function usePresets() {

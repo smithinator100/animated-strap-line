@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   AnimationSettings,
   DEFAULT_SETTINGS,
@@ -207,7 +207,24 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
   const [newPresetName, setNewPresetName] = useState("");
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
+  const [isUpdatingPreset, setIsUpdatingPreset] = useState(false);
+  const [showUpdateSaved, setShowUpdateSaved] = useState(false);
+  const updateSavedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function clearUpdateSavedTimeout() {
+    if (updateSavedTimeoutRef.current) {
+      clearTimeout(updateSavedTimeoutRef.current);
+      updateSavedTimeoutRef.current = null;
+    }
+  }
+
+  useEffect(() => () => clearUpdateSavedTimeout(), []);
+
+  useEffect(() => {
+    setShowUpdateSaved(false);
+    clearUpdateSavedTimeout();
+  }, [activePreset]);
 
   function patch(partial: Partial<AnimationSettings>) {
     onChange({ ...settings, ...partial });
@@ -247,8 +264,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
   async function handleSave() {
     const name = newPresetName.trim();
     if (!name) return;
-    const { headlines: _, ...preset } = settings;
-    await savePreset(name, preset);
+    await savePreset(name, settings);
     setActivePreset(name);
     setNewPresetName("");
   }
@@ -256,15 +272,26 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
   async function handleLoad(name: string) {
     const loaded = await loadPreset(name);
     if (loaded) {
-      onChange({ ...loaded, headlines: settings.headlines });
+      onChange(loaded);
       setActivePreset(name);
     }
   }
 
   async function handleUpdate(name: string) {
-    const { headlines: _, ...preset } = settings;
-    await updatePreset(name, preset);
-    setActivePreset(name);
+    clearUpdateSavedTimeout();
+    setShowUpdateSaved(false);
+    setIsUpdatingPreset(true);
+    try {
+      await updatePreset(name, settings);
+      setActivePreset(name);
+      setShowUpdateSaved(true);
+      updateSavedTimeoutRef.current = setTimeout(() => {
+        setShowUpdateSaved(false);
+        updateSavedTimeoutRef.current = null;
+      }, 2000);
+    } finally {
+      setIsUpdatingPreset(false);
+    }
   }
 
   async function handleDelete(name: string) {
@@ -366,14 +393,30 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             Save
           </button>
           <button
-            className="sp-preset-btn"
-            disabled={!activePreset}
+            type="button"
+            className={`sp-preset-btn sp-preset-btn--update ${isUpdatingPreset || showUpdateSaved ? "sp-preset-btn--with-feedback" : ""} ${isUpdatingPreset ? "sp-preset-btn--loading" : ""}`}
+            disabled={!activePreset || isUpdatingPreset}
             onClick={() => {
               if (activePreset) handleUpdate(activePreset);
             }}
             title={activePreset ? `Overwrite "${activePreset}"` : ""}
+            aria-busy={isUpdatingPreset}
           >
-            Update
+            {isUpdatingPreset ? (
+              <>
+                <span className="sp-btn-spinner" aria-hidden />
+                <span>Saving…</span>
+              </>
+            ) : showUpdateSaved ? (
+              <>
+                <span className="sp-btn-check" aria-hidden>
+                  ✓
+                </span>
+                <span>Saved</span>
+              </>
+            ) : (
+              "Update"
+            )}
           </button>
           <button
             className="sp-preset-btn sp-preset-btn--del"

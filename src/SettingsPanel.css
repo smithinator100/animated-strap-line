@@ -393,6 +393,48 @@
   background: #fff5f5;
 }
 
+.sp-preset-btn--with-feedback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.sp-preset-btn--loading:disabled {
+  opacity: 1;
+  color: #555;
+  cursor: wait;
+}
+
+.sp-btn-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #ccc;
+  border-top-color: #11604d;
+  border-radius: 50%;
+  animation: sp-spin 0.55s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes sp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sp-preset-btn--update.sp-preset-btn--with-feedback:not(.sp-preset-btn--loading) {
+  color: #11604d;
+  border-color: #a8d5c8;
+  background: #f0faf7;
+}
+
+.sp-btn-check {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 /* ── Import / export row ── */
 
 .sp-preset-io {

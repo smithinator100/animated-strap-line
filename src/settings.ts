@@ -53,7 +53,7 @@ export const ICON_OPTIONS: { key: string; label: string; src: string }[] =
     return { key: filename, label, src };
   });
 
-export type AnimationPreset = Omit<AnimationSettings, "headlines">;
+export type AnimationPreset = AnimationSettings;
 
 let _nextId = 1;
 export function makeHeadlineId(): string {
@@ -66,9 +66,9 @@ function iconKey(fragment: string): string {
 
 export const DEFAULT_SETTINGS: AnimationSettings = {
   headlines: [
-    { id: makeHeadlineId(), text: "Create images {icon} privately", iconSrc: iconKey("Subscription") },
-    { id: makeHeadlineId(), text: "Private {icon} searches", iconSrc: iconKey("Search") },
-    { id: makeHeadlineId(), text: "Total privacy {icon} with a VPN", iconSrc: iconKey("VPN") },
+    { id: makeHeadlineId(), text: "Create images [{icon} privately]", iconSrc: iconKey("Subscription") },
+    { id: makeHeadlineId(), text: "Create text [{icon} privately]", iconSrc: iconKey("Subscription") },
+    { id: makeHeadlineId(), text: "Create other stuff [{icon} privately]", iconSrc: iconKey("Subscription") },
   ],
   displayDuration: 3,
   textAnimateBy: "letter",
@@ -103,10 +103,7 @@ export const DEFAULT_SETTINGS: AnimationSettings = {
   iconOutroOpacityTo: 0,
 };
 
-export const DEFAULT_PRESET: AnimationPreset = (() => {
-  const { headlines: _, ...preset } = DEFAULT_SETTINGS;
-  return preset;
-})();
+export const DEFAULT_PRESET: AnimationPreset = DEFAULT_SETTINGS;
 
 export const ICON_TEXT_COLORS: Record<string, string> = {
   "Fire-Utility": "#9E2B08",

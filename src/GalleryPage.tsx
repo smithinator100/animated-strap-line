@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
-import { AnimationPreset, AnimationSettings, DEFAULT_SETTINGS } from "./settings";
+import { AnimationPreset } from "./settings";
 import { AnimationPreview } from "./AnimationPreview";
 import { usePresets } from "./usePresets";
 import "./GalleryPage.css";
 
-function presetToSettings(preset: AnimationPreset): AnimationSettings {
-  return { ...preset, headlines: DEFAULT_SETTINGS.headlines.map((h) => ({ ...h })) };
+const SCENARIO_ORDER = ["Scenario A", "Scenario B"] as const;
+
+function GalleryPresetRow({ name, preset }: { name: string; preset: AnimationPreset }) {
+  return (
+    <li className="gallery-row">
+      <span className="gallery-row-label">{name}</span>
+      <div className="gallery-row-preview">
+        <AnimationPreview settings={preset} className="gallery-row-container" />
+      </div>
+    </li>
+  );
 }
 
 export function GalleryPage() {
@@ -42,20 +51,44 @@ export function GalleryPage() {
     );
   }
 
+  const scenarioEntries = SCENARIO_ORDER.map((name) =>
+    presets.find((p) => p.name === name),
+  ).filter((e): e is { name: string; preset: AnimationPreset } => e !== undefined);
+
+  const scenarioNameSet = new Set<string>(SCENARIO_ORDER);
+  const animationExamples = presets.filter((p) => !scenarioNameSet.has(p.name));
+
   return (
     <div className="gallery">
-      <div className="gallery-grid">
-        {presets.map(({ name, preset }) => (
-          <div key={name} className="gallery-card">
-            <div className="gallery-card-preview">
-              <AnimationPreview
-                settings={presetToSettings(preset)}
-                className="gallery-card-container"
-              />
-            </div>
-            <span className="gallery-card-label">{name}</span>
-          </div>
-        ))}
+      <div className="gallery-sections">
+        {scenarioEntries.length > 0 ? (
+          <section className="gallery-section" aria-labelledby="gallery-scenarios-heading">
+            <h2 id="gallery-scenarios-heading" className="gallery-section-heading">
+              Scenarios
+            </h2>
+            <ul className="gallery-list">
+              {scenarioEntries.map(({ name, preset }) => (
+                <GalleryPresetRow key={name} name={name} preset={preset} />
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
+        {animationExamples.length > 0 ? (
+          <section
+            className="gallery-section"
+            aria-labelledby="gallery-animation-examples-heading"
+          >
+            <h2 id="gallery-animation-examples-heading" className="gallery-section-heading">
+              Animation Examples
+            </h2>
+            <ul className="gallery-list">
+              {animationExamples.map(({ name, preset }) => (
+                <GalleryPresetRow key={name} name={name} preset={preset} />
+              ))}
+            </ul>
+          </section>
+        ) : null}
       </div>
     </div>
   );
