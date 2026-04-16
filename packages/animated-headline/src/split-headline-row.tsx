@@ -2,7 +2,7 @@ import { useMemo, type CSSProperties } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "motion/react";
 import { AnimatedText } from "./animated-text";
 import { AnimatedIcon } from "./animated-icon";
-import type { AnimationConfig, HeadlineConfig } from "./types";
+import type { AnimationConfig, HeadlineConfig, LowMotionConfig, LowPerformanceConfig } from "./types";
 import {
   parseHeadline,
   resolveEasing,
@@ -124,6 +124,10 @@ export function SplitHeadlineRow({
 
   const staticIconSrc = firstHeadline.iconSrc ?? "";
   const staticKey = `static-${playKey}`;
+  const lpConfig = config.lowPerformance;
+  const textLowPerf: false | LowPerformanceConfig = lpConfig.enabled ? lpConfig : false;
+  const lmConfig = config.lowMotion;
+  const textLowMotion: false | LowMotionConfig = lmConfig.enabled ? lmConfig : false;
 
   if (reducedMotion) {
     const displayText = stripBrackets(headline.text);
@@ -184,7 +188,8 @@ export function SplitHeadlineRow({
               outroBlur={config.text.outro.blur}
               outroScale={config.text.outro.scale}
               outroEase={textOutroEase}
-              reducedMotion={false}
+              lowPerformance={textLowPerf}
+              lowMotion={textLowMotion}
             />
           </motion.div>
         ) : dynPreText ? (
@@ -213,7 +218,8 @@ export function SplitHeadlineRow({
                 outroBlur={config.text.outro.blur}
                 outroScale={config.text.outro.scale}
                 outroEase={textOutroEase}
-                reducedMotion={false}
+                lowPerformance={textLowPerf}
+              lowMotion={textLowMotion}
               />
             </motion.div>
           </AnimatePresence>
@@ -305,7 +311,8 @@ export function SplitHeadlineRow({
               outroBlur={config.text.outro.blur}
               outroScale={config.text.outro.scale}
               outroEase={textOutroEase}
-              reducedMotion={false}
+              lowPerformance={textLowPerf}
+              lowMotion={textLowMotion}
             />
           </motion.div>
         ) : dynPostText ? (
@@ -339,7 +346,8 @@ export function SplitHeadlineRow({
                 outroBlur={config.text.outro.blur}
                 outroScale={config.text.outro.scale}
                 outroEase={textOutroEase}
-                reducedMotion={false}
+                lowPerformance={textLowPerf}
+              lowMotion={textLowMotion}
               />
             </motion.div>
           </AnimatePresence>

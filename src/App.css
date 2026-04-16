@@ -1,6 +1,8 @@
 .page {
   height: 100%;
+  min-height: 0;
   display: flex;
+  overflow: hidden;
   background-color: #f5f5f5;
   position: relative;
 }
@@ -44,6 +46,7 @@
 
 .preview {
   flex: 1;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,49 +69,3 @@
   user-select: none;
 }
 
-.textRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.headline {
-  margin: 0;
-  font-family: "DuckSansDisplay", Inter, system-ui, sans-serif;
-  font-size: 24.7px;
-  font-weight: 500;
-  line-height: 32.9px;
-  letter-spacing: 0;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.headlineDark {
-  color: rgba(0, 0, 0, 0.96);
-}
-
-.headlineGreen {
-  color: #11604d;
-}
-
-.letter,
-.word {
-  display: inline-block;
-}
-
-.icon-container {
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-}

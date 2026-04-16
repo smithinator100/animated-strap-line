@@ -474,90 +474,166 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
         />
       </section>
 
+      {/* Motion Modes */}
+      <section className="sp-section">
+        <label className="sp-field sp-toggle">
+          <span className="sp-label">Low performance</span>
+          <input
+            type="checkbox"
+            checked={settings.lowPerformance}
+            onChange={(e) => patch({ lowPerformance: e.target.checked, lowMotion: false })}
+          />
+        </label>
+        <label className="sp-field sp-toggle">
+          <span className="sp-label">Low motion</span>
+          <input
+            type="checkbox"
+            checked={settings.lowMotion}
+            onChange={(e) => patch({ lowMotion: e.target.checked, lowPerformance: false })}
+          />
+        </label>
+      </section>
+
       {/* Intro Accordion */}
       <Accordion title="Intro" defaultOpen>
         <div className="sp-accordion-group">
           <h4 className="sp-group-title">Text</h4>
-          <label className="sp-field">
-            <span className="sp-label">Animate by</span>
-            <select
-              value={settings.textAnimateBy}
-              onChange={(e) => patch({ textAnimateBy: e.target.value as "letter" | "word" })}
-            >
-              <option value="letter">Letter</option>
-              <option value="word">Word</option>
-            </select>
-          </label>
-          <SliderRow
-            label="Speed"
-            value={settings.textIntroSpeed}
-            min={10}
-            max={500}
-            step={5}
-            unit="ms"
-            onChange={(v) => patch({ textIntroSpeed: v })}
-          />
-          <CurveSelect
-            label="Curve"
-            value={settings.textIntroCurve}
-            onChange={(v) => patch({ textIntroCurve: v })}
-          />
-          <SliderRow
-            label={settings.textAnimateBy === "word" ? "Word delay" : "Letter delay"}
-            value={settings.textDelay}
-            min={-500}
-            max={500}
-            step={5}
-            unit="ms"
-            onChange={(v) => patch({ textDelay: v })}
-          />
-          <label className="sp-field sp-toggle">
-            <span className="sp-label">Blur</span>
-            <input
-              type="checkbox"
-              checked={settings.textBlur > 0}
-              onChange={(e) => patch({ textBlur: e.target.checked ? 8 : 0 })}
-            />
-          </label>
-          {settings.textBlur > 0 && (
-            <SliderRow
-              label="Blur amount"
-              value={settings.textBlur}
-              min={1}
-              max={20}
-              step={1}
-              unit="px"
-              onChange={(v) => patch({ textBlur: v })}
-            />
+          {settings.lowMotion ? (
+            <>
+              <SliderRow
+                label="Fade speed"
+                value={settings.fadeIntroSpeed}
+                min={50}
+                max={2000}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ fadeIntroSpeed: v })}
+              />
+              <CurveSelect
+                label="Curve"
+                value={settings.fadeIntroCurve}
+                onChange={(v) => patch({ fadeIntroCurve: v })}
+              />
+              <SliderRow
+                label="Delay"
+                value={settings.fadeIntroDelay}
+                min={0}
+                max={1000}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ fadeIntroDelay: v })}
+              />
+            </>
+          ) : settings.lowPerformance ? (
+            <>
+              <SliderRow
+                label="Speed"
+                value={settings.clipIntroSpeed}
+                min={50}
+                max={1500}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ clipIntroSpeed: v })}
+              />
+              <CurveSelect
+                label="Curve"
+                value={settings.clipIntroCurve}
+                onChange={(v) => patch({ clipIntroCurve: v })}
+              />
+              <SliderRow
+                label="Delay"
+                value={settings.clipIntroDelay}
+                min={0}
+                max={1000}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ clipIntroDelay: v })}
+              />
+            </>
+          ) : (
+            <>
+              <label className="sp-field">
+                <span className="sp-label">Animate by</span>
+                <select
+                  value={settings.textAnimateBy}
+                  onChange={(e) => patch({ textAnimateBy: e.target.value as "letter" | "word" })}
+                >
+                  <option value="letter">Letter</option>
+                  <option value="word">Word</option>
+                </select>
+              </label>
+              <SliderRow
+                label="Speed"
+                value={settings.textIntroSpeed}
+                min={10}
+                max={500}
+                step={5}
+                unit="ms"
+                onChange={(v) => patch({ textIntroSpeed: v })}
+              />
+              <CurveSelect
+                label="Curve"
+                value={settings.textIntroCurve}
+                onChange={(v) => patch({ textIntroCurve: v })}
+              />
+              <SliderRow
+                label={settings.textAnimateBy === "word" ? "Word delay" : "Letter delay"}
+                value={settings.textDelay}
+                min={-500}
+                max={500}
+                step={5}
+                unit="ms"
+                onChange={(v) => patch({ textDelay: v })}
+              />
+              <label className="sp-field sp-toggle">
+                <span className="sp-label">Blur</span>
+                <input
+                  type="checkbox"
+                  checked={settings.textBlur > 0}
+                  onChange={(e) => patch({ textBlur: e.target.checked ? 8 : 0 })}
+                />
+              </label>
+              {settings.textBlur > 0 && (
+                <SliderRow
+                  label="Blur amount"
+                  value={settings.textBlur}
+                  min={1}
+                  max={20}
+                  step={1}
+                  unit="px"
+                  onChange={(v) => patch({ textBlur: v })}
+                />
+              )}
+              <label className="sp-field sp-toggle">
+                <span className="sp-label">Scale</span>
+                <input
+                  type="checkbox"
+                  checked={settings.textScale > 0}
+                  onChange={(e) => patch({ textScale: e.target.checked ? 0.6 : 0 })}
+                />
+              </label>
+              {settings.textScale > 0 && (
+                <SliderRow
+                  label="Scale from"
+                  value={settings.textScale}
+                  min={0.1}
+                  max={2}
+                  step={0.05}
+                  unit=""
+                  onChange={(v) => patch({ textScale: v })}
+                />
+              )}
+              <SliderRow
+                label="Pre / post stagger"
+                value={settings.textStagger}
+                min={-500}
+                max={500}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ textStagger: v })}
+              />
+            </>
           )}
-          <label className="sp-field sp-toggle">
-            <span className="sp-label">Scale</span>
-            <input
-              type="checkbox"
-              checked={settings.textScale > 0}
-              onChange={(e) => patch({ textScale: e.target.checked ? 0.6 : 0 })}
-            />
-          </label>
-          {settings.textScale > 0 && (
-            <SliderRow
-              label="Scale from"
-              value={settings.textScale}
-              min={0.1}
-              max={2}
-              step={0.05}
-              unit=""
-              onChange={(v) => patch({ textScale: v })}
-            />
-          )}
-          <SliderRow
-            label="Pre / post stagger"
-            value={settings.textStagger}
-            min={-500}
-            max={500}
-            step={10}
-            unit="ms"
-            onChange={(v) => patch({ textStagger: v })}
-          />
         </div>
 
         <div className="sp-accordion-group">
@@ -628,86 +704,142 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
       <Accordion title="Outro">
         <div className="sp-accordion-group">
           <h4 className="sp-group-title">Text</h4>
-          <label className="sp-field">
-            <span className="sp-label">Animate by</span>
-            <select
-              value={settings.textOutroAnimateBy}
-              onChange={(e) => patch({ textOutroAnimateBy: e.target.value as "letter" | "word" })}
-            >
-              <option value="letter">Letter</option>
-              <option value="word">Word</option>
-            </select>
-          </label>
-          <SliderRow
-            label="Speed"
-            value={settings.textOutroSpeed}
-            min={10}
-            max={500}
-            step={5}
-            unit="ms"
-            onChange={(v) => patch({ textOutroSpeed: v })}
-          />
-          <CurveSelect
-            label="Curve"
-            value={settings.textOutroCurve}
-            onChange={(v) => patch({ textOutroCurve: v })}
-          />
-          <SliderRow
-            label={settings.textOutroAnimateBy === "word" ? "Word delay" : "Letter delay"}
-            value={settings.textOutroDelay}
-            min={-500}
-            max={500}
-            step={5}
-            unit="ms"
-            onChange={(v) => patch({ textOutroDelay: v })}
-          />
-          <label className="sp-field sp-toggle">
-            <span className="sp-label">Blur</span>
-            <input
-              type="checkbox"
-              checked={settings.textOutroBlur > 0}
-              onChange={(e) => patch({ textOutroBlur: e.target.checked ? 8 : 0 })}
-            />
-          </label>
-          {settings.textOutroBlur > 0 && (
-            <SliderRow
-              label="Blur amount"
-              value={settings.textOutroBlur}
-              min={1}
-              max={20}
-              step={1}
-              unit="px"
-              onChange={(v) => patch({ textOutroBlur: v })}
-            />
+          {settings.lowMotion ? (
+            <>
+              <SliderRow
+                label="Fade speed"
+                value={settings.fadeOutroSpeed}
+                min={50}
+                max={2000}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ fadeOutroSpeed: v })}
+              />
+              <CurveSelect
+                label="Curve"
+                value={settings.fadeOutroCurve}
+                onChange={(v) => patch({ fadeOutroCurve: v })}
+              />
+              <SliderRow
+                label="Delay"
+                value={settings.fadeOutroDelay}
+                min={0}
+                max={1000}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ fadeOutroDelay: v })}
+              />
+            </>
+          ) : settings.lowPerformance ? (
+            <>
+              <SliderRow
+                label="Speed"
+                value={settings.clipOutroSpeed}
+                min={50}
+                max={1500}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ clipOutroSpeed: v })}
+              />
+              <CurveSelect
+                label="Curve"
+                value={settings.clipOutroCurve}
+                onChange={(v) => patch({ clipOutroCurve: v })}
+              />
+              <SliderRow
+                label="Delay"
+                value={settings.clipOutroDelay}
+                min={0}
+                max={1000}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ clipOutroDelay: v })}
+              />
+            </>
+          ) : (
+            <>
+              <label className="sp-field">
+                <span className="sp-label">Animate by</span>
+                <select
+                  value={settings.textOutroAnimateBy}
+                  onChange={(e) => patch({ textOutroAnimateBy: e.target.value as "letter" | "word" })}
+                >
+                  <option value="letter">Letter</option>
+                  <option value="word">Word</option>
+                </select>
+              </label>
+              <SliderRow
+                label="Speed"
+                value={settings.textOutroSpeed}
+                min={10}
+                max={500}
+                step={5}
+                unit="ms"
+                onChange={(v) => patch({ textOutroSpeed: v })}
+              />
+              <CurveSelect
+                label="Curve"
+                value={settings.textOutroCurve}
+                onChange={(v) => patch({ textOutroCurve: v })}
+              />
+              <SliderRow
+                label={settings.textOutroAnimateBy === "word" ? "Word delay" : "Letter delay"}
+                value={settings.textOutroDelay}
+                min={-500}
+                max={500}
+                step={5}
+                unit="ms"
+                onChange={(v) => patch({ textOutroDelay: v })}
+              />
+              <label className="sp-field sp-toggle">
+                <span className="sp-label">Blur</span>
+                <input
+                  type="checkbox"
+                  checked={settings.textOutroBlur > 0}
+                  onChange={(e) => patch({ textOutroBlur: e.target.checked ? 8 : 0 })}
+                />
+              </label>
+              {settings.textOutroBlur > 0 && (
+                <SliderRow
+                  label="Blur amount"
+                  value={settings.textOutroBlur}
+                  min={1}
+                  max={20}
+                  step={1}
+                  unit="px"
+                  onChange={(v) => patch({ textOutroBlur: v })}
+                />
+              )}
+              <label className="sp-field sp-toggle">
+                <span className="sp-label">Scale</span>
+                <input
+                  type="checkbox"
+                  checked={settings.textOutroScale > 0}
+                  onChange={(e) => patch({ textOutroScale: e.target.checked ? 0.6 : 0 })}
+                />
+              </label>
+              {settings.textOutroScale > 0 && (
+                <SliderRow
+                  label="Scale to"
+                  value={settings.textOutroScale}
+                  min={0.1}
+                  max={2}
+                  step={0.05}
+                  unit=""
+                  onChange={(v) => patch({ textOutroScale: v })}
+                />
+              )}
+              <SliderRow
+                label="Pre / post stagger"
+                value={settings.textOutroStagger}
+                min={-500}
+                max={500}
+                step={10}
+                unit="ms"
+                onChange={(v) => patch({ textOutroStagger: v })}
+              />
+            </>
           )}
-          <label className="sp-field sp-toggle">
-            <span className="sp-label">Scale</span>
-            <input
-              type="checkbox"
-              checked={settings.textOutroScale > 0}
-              onChange={(e) => patch({ textOutroScale: e.target.checked ? 0.6 : 0 })}
-            />
-          </label>
-          {settings.textOutroScale > 0 && (
-            <SliderRow
-              label="Scale to"
-              value={settings.textOutroScale}
-              min={0.1}
-              max={2}
-              step={0.05}
-              unit=""
-              onChange={(v) => patch({ textOutroScale: v })}
-            />
-          )}
-          <SliderRow
-            label="Pre / post stagger"
-            value={settings.textOutroStagger}
-            min={-500}
-            max={500}
-            step={10}
-            unit="ms"
-            onChange={(v) => patch({ textOutroStagger: v })}
-          />
         </div>
 
         <div className="sp-accordion-group">

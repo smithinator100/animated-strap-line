@@ -4,6 +4,8 @@ import type {
   DeepPartial,
   HeadlineConfig,
   HeadlineToken,
+  LowMotionConfig,
+  LowPerformanceConfig,
   ParsedHeadline,
   TextAnimateBy,
 } from "./types";
@@ -11,6 +13,34 @@ import type {
 /* ------------------------------------------------------------------ */
 /*  Default configuration                                              */
 /* ------------------------------------------------------------------ */
+
+export const DEFAULT_LOW_PERFORMANCE: LowPerformanceConfig = {
+  enabled: false,
+  intro: {
+    speed: 400,
+    curve: "easeOutCubic",
+    delay: 0,
+  },
+  outro: {
+    speed: 300,
+    curve: "easeInCubic",
+    delay: 0,
+  },
+};
+
+export const DEFAULT_LOW_MOTION: LowMotionConfig = {
+  enabled: false,
+  intro: {
+    speed: 400,
+    curve: "easeOutCubic",
+    delay: 0,
+  },
+  outro: {
+    speed: 300,
+    curve: "easeInCubic",
+    delay: 0,
+  },
+};
 
 export const DEFAULT_CONFIG: AnimationConfig = {
   displayDuration: 3,
@@ -51,6 +81,8 @@ export const DEFAULT_CONFIG: AnimationConfig = {
       opacityTo: 0,
     },
   },
+  lowPerformance: DEFAULT_LOW_PERFORMANCE,
+  lowMotion: DEFAULT_LOW_MOTION,
 };
 
 /* ------------------------------------------------------------------ */
@@ -176,6 +208,27 @@ export function computeIntroDuration(
   config: AnimationConfig,
 ): number {
   const { hasIcon, preText, postText } = parseHeadline(headline.text);
+
+  if (config.lowMotion.enabled) {
+    const fadeDur = config.lowMotion.intro.speed / 1000;
+    const fadeDelay = config.lowMotion.intro.delay / 1000;
+    const textEnd = fadeDelay + fadeDur;
+    const iconEnd = hasIcon
+      ? config.icon.intro.delay / 1000 + config.icon.intro.speed / 1000
+      : 0;
+    return Math.max(textEnd, iconEnd, 0);
+  }
+
+  if (config.lowPerformance.enabled) {
+    const clipDur = config.lowPerformance.intro.speed / 1000;
+    const clipDelay = config.lowPerformance.intro.delay / 1000;
+    const textEnd = clipDelay + clipDur;
+    const iconEnd = hasIcon
+      ? config.icon.intro.delay / 1000 + config.icon.intro.speed / 1000
+      : 0;
+    return Math.max(textEnd, iconEnd, 0);
+  }
+
   const durationSec = config.text.intro.speed / 1000;
   const staggerSec = Math.max(
     (config.text.intro.speed + config.text.intro.delay) / 1000,

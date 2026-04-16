@@ -102,6 +102,9 @@ interface AnimationConfig {
     intro: IconPhaseIntroConfig;
     outro: IconPhaseOutroConfig;
   };
+
+  lowPerformance: LowPerformanceConfig;
+  lowMotion: LowMotionConfig;
 }
 ```
 
@@ -137,6 +140,44 @@ interface AnimationConfig {
 | `curve`     | `EasingKey` | `"easeInCubic"` |
 | `scaleTo`   | `number`    | `0`             |
 | `opacityTo` | `number`    | `0`             |
+
+### `LowPerformanceConfig`
+
+When `lowPerformance.enabled` is `true`, per-letter/word animation is replaced with a left-to-right `clipPath` reveal on each text segment. Blur and scale are disabled. This is useful for devices or contexts where per-character animation is too expensive.
+
+```ts
+interface LowPerformanceConfig {
+  enabled: boolean;      // default: false
+  intro: ClipPhaseConfig;
+  outro: ClipPhaseConfig;
+}
+```
+
+| Field   | Type        | Default (intro)  | Default (outro)  | Description                            |
+| ------- | ----------- | ---------------- | ---------------- | -------------------------------------- |
+| `speed` | `number`    | `400`            | `300`            | Clip reveal duration (ms).             |
+| `curve` | `EasingKey` | `"easeOutCubic"` | `"easeInCubic"`  | Easing curve for the clip transition.  |
+| `delay` | `number`    | `0`              | `0`              | Delay before clip animation starts (ms). |
+
+### `LowMotionConfig`
+
+When `lowMotion.enabled` is `true`, text simply fades in and out as a whole line. No per-character animation, no clip mask, no blur, and no scale. This is the simplest animation mode.
+
+```ts
+interface LowMotionConfig {
+  enabled: boolean;      // default: false
+  intro: FadePhaseConfig;
+  outro: FadePhaseConfig;
+}
+```
+
+| Field   | Type        | Default (intro)  | Default (outro)  | Description                            |
+| ------- | ----------- | ---------------- | ---------------- | -------------------------------------- |
+| `speed` | `number`    | `400`            | `300`            | Fade duration (ms).                    |
+| `curve` | `EasingKey` | `"easeOutCubic"` | `"easeInCubic"`  | Easing curve for the fade.             |
+| `delay` | `number`    | `0`              | `0`              | Delay before fade starts (ms).         |
+
+> `lowMotion` takes priority over `lowPerformance` if both are enabled.
 
 ### Available easing curves
 
@@ -232,6 +273,41 @@ Because `--ah-font-size` uses `clamp()` by default, text is responsive out of th
 />
 ```
 
+### Low performance (clip reveal)
+
+```tsx
+<AnimatedHeadline
+  headlines={[
+    { text: "Search {icon} privately", iconSrc: "/search.svg" },
+    { text: "Browse {icon} safely", iconSrc: "/shield.svg" },
+  ]}
+  settings={{
+    lowPerformance: {
+      enabled: true,
+      intro: { speed: 500, curve: "easeOutQuart" },
+    },
+  }}
+/>
+```
+
+### Low motion (simple fade)
+
+```tsx
+<AnimatedHeadline
+  headlines={[
+    { text: "Search {icon} privately", iconSrc: "/search.svg" },
+    { text: "Browse {icon} safely", iconSrc: "/shield.svg" },
+  ]}
+  settings={{
+    lowMotion: {
+      enabled: true,
+      intro: { speed: 600 },
+      outro: { speed: 400 },
+    },
+  }}
+/>
+```
+
 ### Controlled advance (no auto-play)
 
 ```tsx
@@ -261,8 +337,12 @@ export { AnimatedHeadline } from "./animated-headline";
 export type {
   AnimatedHeadlineProps,
   AnimationConfig,
+  ClipPhaseConfig,
   DeepPartial,
+  FadePhaseConfig,
   HeadlineConfig,
+  LowMotionConfig,
+  LowPerformanceConfig,
   TextAnimateBy,
   TextConfig,
   TextPhaseConfig,
@@ -278,6 +358,8 @@ export type { CubicBezier, EasingKey } from "./easing";
 // Utilities
 export {
   DEFAULT_CONFIG,
+  DEFAULT_LOW_MOTION,
+  DEFAULT_LOW_PERFORMANCE,
   deepMerge,
   resolveConfig,
   parseHeadline,

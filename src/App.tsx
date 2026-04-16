@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
-  AnimationSettings,
   DEFAULT_SETTINGS,
   makeHeadlineId,
 } from "./settings";
-import { AnimationPreview } from "./AnimationPreview";
+import type { AnimationSettings } from "./settings";
+import { AnimatedHeadline } from "@ddg-motion/animated-headline";
+import { toHeadlines, toAnimationConfig } from "./adapt-settings";
 import { SettingsPanel } from "./SettingsPanel";
 import { GalleryPage } from "./GalleryPage";
 import "./App.css";
 
 type Page = "gallery" | "create";
+
+const PROTOTYPE_STYLE = {
+  "--ah-font-family": '"DuckSansDisplay", Inter, system-ui, sans-serif',
+  "--ah-font-size": "24.7px",
+  "--ah-line-height": "32.9px",
+  "--ah-icon-size": "32px",
+  "--ah-gap": "6px",
+} as React.CSSProperties;
 
 export function App() {
   const [page, setPage] = useState<Page>("gallery");
@@ -17,6 +26,9 @@ export function App() {
     ...DEFAULT_SETTINGS,
     headlines: DEFAULT_SETTINGS.headlines.map((h) => ({ ...h, id: makeHeadlineId() })),
   });
+
+  const headlines = useMemo(() => toHeadlines(settings), [settings]);
+  const animationConfig = useMemo(() => toAnimationConfig(settings), [settings]);
 
   return (
     <div className="page">
@@ -42,7 +54,12 @@ export function App() {
       ) : (
         <>
           <div className="preview">
-            <AnimationPreview settings={settings} className="container" />
+            <AnimatedHeadline
+              headlines={headlines}
+              settings={animationConfig}
+              className="container"
+              style={PROTOTYPE_STYLE}
+            />
           </div>
           <SettingsPanel settings={settings} onChange={setSettings} />
         </>

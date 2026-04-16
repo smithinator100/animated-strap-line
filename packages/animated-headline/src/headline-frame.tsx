@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { motion } from "motion/react";
 import { AnimatedText } from "./animated-text";
 import { AnimatedIcon } from "./animated-icon";
-import type { AnimationConfig, HeadlineConfig } from "./types";
+import type { AnimationConfig, HeadlineConfig, LowMotionConfig, LowPerformanceConfig } from "./types";
 import { parseHeadline, resolveEasing, unitCount } from "./utils";
 import styles from "./styles.module.css";
 
@@ -56,6 +56,10 @@ export function HeadlineFrame({
   const iconOutroDurationSec = config.icon.outro.speed / 1000;
 
   const iconSrc = headline.iconSrc ?? "";
+  const lpConfig = config.lowPerformance;
+  const textLowPerf: false | LowPerformanceConfig = lpConfig.enabled ? lpConfig : false;
+  const lmConfig = config.lowMotion;
+  const textLowMotion: false | LowMotionConfig = lmConfig.enabled ? lmConfig : false;
 
   if (reducedMotion) {
     return (
@@ -112,7 +116,8 @@ export function HeadlineFrame({
           outroBlur={config.text.outro.blur}
           outroScale={config.text.outro.scale}
           outroEase={textOutroEase}
-          reducedMotion={false}
+          lowPerformance={textLowPerf}
+          lowMotion={textLowMotion}
         />
       )}
       {hasIcon && iconSrc && (
@@ -156,7 +161,8 @@ export function HeadlineFrame({
           outroBlur={config.text.outro.blur}
           outroScale={config.text.outro.scale}
           outroEase={textOutroEase}
-          reducedMotion={false}
+          lowPerformance={textLowPerf}
+          lowMotion={textLowMotion}
         />
       )}
     </motion.div>

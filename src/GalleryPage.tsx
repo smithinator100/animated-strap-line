@@ -1,17 +1,34 @@
-import { useState, useEffect } from "react";
-import { AnimationPreset } from "./settings";
-import { AnimationPreview } from "./AnimationPreview";
+import { useState, useEffect, useMemo, type CSSProperties } from "react";
+import type { AnimationPreset } from "./settings";
+import { AnimatedHeadline } from "@ddg-motion/animated-headline";
+import { toHeadlines, toAnimationConfig } from "./adapt-settings";
 import { usePresets } from "./usePresets";
 import "./GalleryPage.css";
 
 const SCENARIO_ORDER = ["Scenario A", "Scenario B"] as const;
 
+const GALLERY_STYLE: CSSProperties = {
+  "--ah-font-family": '"DuckSansDisplay", Inter, system-ui, sans-serif',
+  "--ah-font-size": "24.7px",
+  "--ah-line-height": "32.9px",
+  "--ah-icon-size": "32px",
+  "--ah-gap": "6px",
+} as CSSProperties;
+
 function GalleryPresetRow({ name, preset }: { name: string; preset: AnimationPreset }) {
+  const headlines = useMemo(() => toHeadlines(preset), [preset]);
+  const config = useMemo(() => toAnimationConfig(preset), [preset]);
+
   return (
     <li className="gallery-row">
       <span className="gallery-row-label">{name}</span>
       <div className="gallery-row-preview">
-        <AnimationPreview settings={preset} className="gallery-row-container" />
+        <AnimatedHeadline
+          headlines={headlines}
+          settings={config}
+          className="gallery-row-container"
+          style={GALLERY_STYLE}
+        />
       </div>
     </li>
   );

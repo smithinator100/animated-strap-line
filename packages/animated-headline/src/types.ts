@@ -28,6 +28,26 @@ export interface HeadlineConfig {
 /*  Animation configuration                                            */
 /* ------------------------------------------------------------------ */
 
+export interface ClipPhaseConfig {
+  speed: number;
+  curve: EasingKey;
+  delay: number;
+}
+
+export interface LowPerformanceConfig {
+  enabled: boolean;
+  intro: ClipPhaseConfig;
+  outro: ClipPhaseConfig;
+}
+
+export type FadePhaseConfig = ClipPhaseConfig;
+
+export interface LowMotionConfig {
+  enabled: boolean;
+  intro: FadePhaseConfig;
+  outro: FadePhaseConfig;
+}
+
 export interface TextPhaseConfig {
   speed: number;
   curve: EasingKey;
@@ -70,6 +90,8 @@ export interface AnimationConfig {
   displayDuration: number;
   text: TextConfig;
   icon: IconConfig;
+  lowPerformance: LowPerformanceConfig;
+  lowMotion: LowMotionConfig;
 }
 
 /* ------------------------------------------------------------------ */

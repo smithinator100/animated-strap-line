@@ -1,9 +1,12 @@
 import { useMemo } from "react";
 import { motion } from "motion/react";
 import type { CubicBezier } from "./easing";
-import type { TextAnimateBy } from "./types";
-import { buildWordIndices } from "./utils";
+import type { LowMotionConfig, LowPerformanceConfig, TextAnimateBy } from "./types";
+import { buildWordIndices, resolveEasing } from "./utils";
 import styles from "./styles.module.css";
+
+const CLIP_HIDDEN = "inset(0% 100% 0% 0%)";
+const CLIP_VISIBLE = "inset(0% 0% 0% 0%)";
 
 interface AnimatedTextProps {
   text: string;
@@ -23,7 +26,103 @@ interface AnimatedTextProps {
   outroBlur: number;
   outroScale: number;
   outroEase: CubicBezier;
-  reducedMotion: boolean;
+  lowPerformance: false | LowPerformanceConfig;
+  lowMotion: false | LowMotionConfig;
+}
+
+function ClipAnimatedText({
+  text,
+  className,
+  style,
+  introDelay = 0,
+  config,
+}: {
+  text: string;
+  className?: string;
+  style?: React.CSSProperties;
+  introDelay?: number;
+  config: LowPerformanceConfig;
+}) {
+  const introEase = resolveEasing(config.intro.curve);
+  const outroEase = resolveEasing(config.outro.curve);
+
+  return (
+    <motion.p
+      className={className}
+      style={{ ...style, willChange: "clip-path, opacity" }}
+      variants={{
+        hidden: {
+          clipPath: CLIP_HIDDEN,
+          opacity: 0,
+        },
+        visible: {
+          clipPath: CLIP_VISIBLE,
+          opacity: 1,
+          transition: {
+            duration: config.intro.speed / 1000,
+            ease: introEase,
+            delay: introDelay + config.intro.delay / 1000,
+          },
+        },
+        exit: {
+          clipPath: CLIP_HIDDEN,
+          opacity: 0,
+          transition: {
+            duration: config.outro.speed / 1000,
+            ease: outroEase,
+            delay: config.outro.delay / 1000,
+          },
+        },
+      }}
+    >
+      {text}
+    </motion.p>
+  );
+}
+
+function FadeAnimatedText({
+  text,
+  className,
+  style,
+  introDelay = 0,
+  config,
+}: {
+  text: string;
+  className?: string;
+  style?: React.CSSProperties;
+  introDelay?: number;
+  config: LowMotionConfig;
+}) {
+  const introEase = resolveEasing(config.intro.curve);
+  const outroEase = resolveEasing(config.outro.curve);
+
+  return (
+    <motion.p
+      className={className}
+      style={style}
+      variants={{
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: {
+            duration: config.intro.speed / 1000,
+            ease: introEase,
+            delay: introDelay + config.intro.delay / 1000,
+          },
+        },
+        exit: {
+          opacity: 0,
+          transition: {
+            duration: config.outro.speed / 1000,
+            ease: outroEase,
+            delay: config.outro.delay / 1000,
+          },
+        },
+      }}
+    >
+      {text}
+    </motion.p>
+  );
 }
 
 export function AnimatedText({
@@ -44,8 +143,33 @@ export function AnimatedText({
   outroBlur,
   outroScale,
   outroEase,
-  reducedMotion,
+  lowPerformance,
+  lowMotion,
 }: AnimatedTextProps) {
+  if (lowMotion && lowMotion.enabled) {
+    return (
+      <FadeAnimatedText
+        text={text}
+        className={className}
+        style={style}
+        introDelay={introDelay}
+        config={lowMotion}
+      />
+    );
+  }
+
+  if (lowPerformance && lowPerformance.enabled) {
+    return (
+      <ClipAnimatedText
+        text={text}
+        className={className}
+        style={style}
+        introDelay={introDelay}
+        config={lowPerformance}
+      />
+    );
+  }
+
   const outroAnimateBy = outroAnimateByProp ?? animateBy;
 
   const wordIndices = useMemo(() => buildWordIndices(text), [text]);
@@ -78,14 +202,6 @@ export function AnimatedText({
 
     return { hiddenStyle: hidden, visibleStyle: visible, exitStyle: exit };
   }, [introBlur, introScale, outroBlur, outroScale]);
-
-  if (reducedMotion) {
-    return (
-      <p className={className} style={style}>
-        {text}
-      </p>
-    );
-  }
 
   return (
     <motion.p

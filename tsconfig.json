@@ -15,7 +15,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "paths": {
+      "@ddg-motion/animated-headline": ["./packages/animated-headline/src/index.ts"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "packages/animated-headline/src"]
 }

@@ -5,11 +5,26 @@ export interface Headline {
 }
 
 export type TextAnimateBy = "letter" | "word";
-
 export interface AnimationSettings {
   headlines: Headline[];
   displayDuration: number;
   textAnimateBy: TextAnimateBy;
+
+  lowPerformance: boolean;
+  clipIntroSpeed: number;
+  clipIntroCurve: string;
+  clipIntroDelay: number;
+  clipOutroSpeed: number;
+  clipOutroCurve: string;
+  clipOutroDelay: number;
+
+  lowMotion: boolean;
+  fadeIntroSpeed: number;
+  fadeIntroCurve: string;
+  fadeIntroDelay: number;
+  fadeOutroSpeed: number;
+  fadeOutroCurve: string;
+  fadeOutroDelay: number;
 
   textIntroSpeed: number;
   textIntroCurve: string;
@@ -72,6 +87,22 @@ export const DEFAULT_SETTINGS: AnimationSettings = {
   ],
   displayDuration: 3,
   textAnimateBy: "letter",
+
+  lowPerformance: false,
+  clipIntroSpeed: 400,
+  clipIntroCurve: "easeOutCubic",
+  clipIntroDelay: 0,
+  clipOutroSpeed: 300,
+  clipOutroCurve: "easeInCubic",
+  clipOutroDelay: 0,
+
+  lowMotion: false,
+  fadeIntroSpeed: 400,
+  fadeIntroCurve: "easeOutCubic",
+  fadeIntroDelay: 0,
+  fadeOutroSpeed: 300,
+  fadeOutroCurve: "easeInCubic",
+  fadeOutroDelay: 0,
 
   textIntroSpeed: 200,
   textIntroCurve: "easeInCubic",
